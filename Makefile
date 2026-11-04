@@ -1,31 +1,23 @@
 # Commerce OS developer commands (spec section 13).
 # Each recipe line is one plain command so it runs under both sh (CI) and cmd (Windows).
 
-WEB := npm --prefix apps/web
-
 .PHONY: setup dev test lint eval e2e openapi migrate seed
 
 setup:
 	uv sync --locked
-	$(WEB) ci
 	docker compose up -d --wait
 	$(MAKE) seed
 
 dev:
 	docker compose up -d --wait
-	$(WEB) run dev
 
 test:
 	uv run pytest
-	$(WEB) test
 
 lint:
 	uv run ruff check .
 	uv run ruff format --check .
 	uv run mypy
-	$(WEB) run lint
-	$(WEB) run format:check
-	$(WEB) run typecheck
 
 # Placeholders: these fail on purpose until the task named below builds them.
 eval:
