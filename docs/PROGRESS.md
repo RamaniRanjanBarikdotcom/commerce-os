@@ -24,6 +24,7 @@
 - Check whether any channel goes straight from submitted to live (eBay publish first). Resolve in T21 after reading the eBay documentation.
 - `npm audit` has 16 moderate findings from one minimatch advisory in the ESLint toolchain (dev-only); revisit when eslint-config-next updates (see docs/DECISIONS.md).
 - ESLint stays on 9.39.5 (marked "no longer supported" by npm) until the React, import and jsx-a11y plugins accept ESLint 10.
+- Re-check ESLint 10 and TypeScript 7 support when the plugins allow it (by T09).
 - The no-symlinks test cannot be exercised on this exFAT drive (it cannot hold symlinks); it will run for real in CI on Linux.
 
 ## Notes for later tasks
