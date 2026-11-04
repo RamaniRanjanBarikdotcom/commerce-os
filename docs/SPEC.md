@@ -191,7 +191,7 @@ These are firm choices so the agent does not drift between tools. Pin exact vers
 | Background workflows | Temporal with the Python SDK | Dev server in Docker Compose; hosting choice recorded later |
 | HTTP client | httpx | Used only inside connectors |
 | Validation of marketplace schemas | `jsonschema` plus a small extension for Amazon's custom vocabulary | Cached per product type and marketplace |
-| Object storage | S3-compatible; MinIO in local development | Images, import files, stored publish payloads |
+| Object storage | S3-compatible; SeaweedFS (local S3-compatible server) in local development | Images, import files, stored publish payloads |
 | Authentication | OIDC behind an `AuthProvider` interface; Keycloak in Docker Compose for development, a managed provider in production | Choose the production provider later; the interface keeps that cheap |
 | AI | An `LLMClient` interface with the provider SDK behind it | Model names come from configuration (`LLM_MODEL_FAST`, `LLM_MODEL_WRITER`), never from code |
 | Observability | OpenTelemetry, structlog, Sentry | Trace one listing across API, workflow and connector |
@@ -974,7 +974,7 @@ Aim for at least 80% line coverage in `validation`, `inventory`, `listings` and 
 
 | Environment | Purpose | Notes |
 | --- | --- | --- |
-| Local | Development | Docker Compose with Postgres, Redis, Temporal dev server, MinIO, Keycloak and a mail catcher; `make setup` starts everything and loads seed data |
+| Local | Development | Docker Compose with Postgres, Redis, Temporal dev server, SeaweedFS (local S3-compatible server), Keycloak and a mail catcher; `make setup` starts everything and loads seed data |
 | Staging | Pilot rehearsal | EU region; marketplace sandboxes and test accounts only; same infrastructure code as production |
 | Production | Real sellers | EU region; real credentials only here |
 
@@ -992,7 +992,7 @@ There are 36 tasks in 9 epics. Give the agent one task at a time using the templ
 
 | ID | Task | Read | After | Done when |
 | --- | --- | --- | --- | --- |
-| T01 | Repository scaffold: folders from section 3, `AGENTS.md`, `CLAUDE.md`, Makefile, Docker Compose (Postgres with pgvector, Redis, Temporal dev server, MinIO, Keycloak, mail catcher), CI skeleton | 1, 3, 4, 13 | none | `make setup` and `make test` pass on a clean checkout and CI is green |
+| T01 | Repository scaffold: folders from section 3, `AGENTS.md`, `CLAUDE.md`, Makefile, Docker Compose (Postgres with pgvector, Redis, Temporal dev server, SeaweedFS (local S3-compatible server), Keycloak, mail catcher), CI skeleton | 1, 3, 4, 13 | none | `make setup` and `make test` pass on a clean checkout and CI is green |
 | T02 | API skeleton: FastAPI app, settings class, structured logging, problem-details errors, health endpoint, OpenAPI export, generated TypeScript client | 3, 4, 10 | T01 | `GET /health` returns ok; `make openapi` writes the file and the web client types |
 | T03 | Database foundation: first Alembic migration with the whole schema from section 6, RLS on every tenant table, separate owner and app roles, test helper that sets the tenant | 6, 12, 13 | T01 | The tenant-isolation test passes for every table with `tenant_id` |
 | T04 | Authentication and tenancy: `AuthProvider` with a Keycloak implementation, `/me`, workspaces, invitations, memberships, role checks, `memberships_for_user` | 6, 10, 12 | T02, T03 | A test exists for each row of the roles table, and a user cannot reach another workspace |
@@ -1004,7 +1004,7 @@ There are 36 tasks in 9 epics. Give the agent one task at a time using the templ
 | T05 | Packs: pack file format, loader into the `packs` table, the `ink_toner` and `luggage` packs from section 15, attribute validation | 6, 15 | T03 | Invalid values are rejected with field errors; pack endpoints return definitions |
 | T06 | Catalog API: products, variants, attribute values, soft delete, filters, pagination, audit entries | 6, 10 | T04, T05 | CRUD tests pass; attribute writes are validated against the pack |
 | T07 | CSV import: upload, automatic column mapping guess, preview, background import with row errors | 10, 11 | T06 | A 100-row sample imports with a row-level error report; importing again is idempotent by SKU |
-| T08 | Images: signed upload URLs, metadata, size warnings, safe URL-fetch helper | 6, 12 | T06 | Upload works against local MinIO; the helper blocks internal addresses (tested) |
+| T08 | Images: signed upload URLs, metadata, size warnings, safe URL-fetch helper | 6, 12 | T06 | Upload works against local SeaweedFS (local S3-compatible server); the helper blocks internal addresses (tested) |
 | T09 | Web shell and catalog screens: `AppShell`, `DataGrid`, `StatusChip`, products grid, import wizard, editor tabs for details, attributes and images | 11 | T02, T06, T07, T08 | Playwright creates a product, imports a CSV and edits attributes; the grid is keyboard-navigable; strings come from next-intl |
 
 ### E2 Connector core and eBay
