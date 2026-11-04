@@ -237,6 +237,22 @@ Only worker activities and the channel test endpoint may import `packages/connec
 
 A live listing can also be ended by the seller (status `ended`, not drawn), and a suppressed listing returns to Live once the cause is fixed and the channel accepts it again.
 
+### Listing status transitions
+
+| From | To | Trigger |
+| --- | --- | --- |
+| draft | validated | All validators pass |
+| validated | draft | Data or content changes after validation, or a validator now fails |
+| validated | submitted | The connector accepted the publish request |
+| submitted | in_review | The channel confirms it received the listing and is processing it |
+| submitted | rejected | The channel refuses it immediately |
+| in_review | live | The channel reports the listing as active |
+| in_review | rejected | The channel reports errors |
+| live | suppressed | The channel reports the listing as hidden or inactive |
+| suppressed | live | The channel reports it active again |
+| rejected | draft | The seller fixes the cause and retries |
+| live or suppressed | ended | The seller ends the listing and the channel confirms |
+
 ## 6. Database schema
 
 This is the starting schema for the first Alembic migration. Use text columns with CHECK constraints instead of Postgres enum types, because they are easier to change. Every table also has `created_at` and `updated_at timestamptz NOT NULL DEFAULT now()`, left out below to keep the listing short. Tables marked global have no `tenant_id`.
