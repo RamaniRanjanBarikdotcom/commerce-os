@@ -79,7 +79,9 @@ def test_section_3_folder_exists(path: str) -> None:
 
 @pytest.mark.parametrize("module", ["app", "workflows", "activities", "connectors"])
 def test_python_packages_import(module: str) -> None:
-    importlib.import_module(module)
+    imported = importlib.import_module(module)
+    # A folder without __init__.py still imports as a namespace package; require a real one.
+    assert imported.__file__ is not None, f"{module} has no __init__.py"
 
 
 def test_makefile_defines_section_13_targets() -> None:
