@@ -1,0 +1,7 @@
+.next
+out
+coverage
+package-lock.json
+next-env.d.ts
+# Next.js rewrites tsconfig.json in its own format on every build.
+tsconfig.json

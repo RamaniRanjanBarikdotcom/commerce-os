@@ -18,8 +18,10 @@ node_modules/
 .next/
 out/
 coverage/
+next-env.d.ts
+*.tsbuildinfo
 
-# Local data folders (Docker volumes, MinIO, Postgres, uploads)
+# Local data folders (Docker volumes, object storage, Postgres, uploads)
 /data/
 /.data/
 /.local/
