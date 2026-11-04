@@ -11,11 +11,19 @@
   - Docker Compose: Postgres 17 + pgvector, Redis, Temporal dev server, SeaweedFS, Keycloak, Mailpit; pinned tags, healthchecks, named volumes only, ports on 127.0.0.1.
   - Makefile with the nine section 13 targets (placeholders exit 1, seed exits 0).
   - Scaffold tests in `tests/test_scaffold.py`.
-- Next: T01b (minimal Next.js app in `apps/web`, web commands in the Makefile, GitHub Actions CI).
+- T01b (web and CI) is done on the same branch, `task/T01-scaffold`:
+  - Minimal Next.js 16 app in `apps/web`: one placeholder page, strict TypeScript, ESLint, Prettier and a Vitest smoke test; Node 22 pinned in `.nvmrc`; exact npm versions.
+  - Makefile `setup`, `dev`, `test` and `lint` now include the web commands.
+  - `.github/workflows/ci.yml`: Python, web, `docker compose config` and gitleaks jobs; actions pinned by SHA; `contents: read`; no secrets.
+  - Scaffold tests also check the npm scripts the Makefile calls, the Node pin and the CI rules.
+- T01 acceptance: `make setup` and `make test` pass on a clean checkout. "CI is green" is checked once the branch is pushed and a pull request is opened.
+- Next: T02 API skeleton (also adds import-linter and pytest-asyncio, and splits the uv project into workspace members).
 
 ## Open items
 
 - Check whether any channel goes straight from submitted to live (eBay publish first). Resolve in T21 after reading the eBay documentation.
+- `npm audit` has 16 moderate findings from one minimatch advisory in the ESLint toolchain (dev-only); revisit when eslint-config-next updates (see docs/DECISIONS.md).
+- ESLint stays on 9.39.5 (marked "no longer supported" by npm) until the React, import and jsx-a11y plugins accept ESLint 10.
 - The no-symlinks test cannot be exercised on this exFAT drive (it cannot hold symlinks); it will run for real in CI on Linux.
 
 ## Notes for later tasks

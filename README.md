@@ -9,19 +9,27 @@ progress and decisions are in [docs/PROGRESS.md](docs/PROGRESS.md) and
 
 - Git
 - [uv](https://docs.astral.sh/uv/) (downloads Python 3.12 from `.python-version`)
+- Node.js 22 (exact version in `.nvmrc`) with npm
 - GNU make
 - Docker with Docker Compose v2
 
 ## Quick start
 
 ```sh
-make setup   # install Python tools, start local services, seed data
-make test    # run the tests
-make lint    # ruff, ruff format check, mypy (strict)
+make setup   # install Python and web tools, start local services, seed data
+make test    # pytest and Vitest
+make lint    # ruff, mypy (strict), ESLint, Prettier check, tsc
 ```
 
-`make dev` starts the local services. `make eval`, `make e2e`, `make openapi` and
-`make migrate` fail on purpose until the tasks that build them (T19, T09, T02, T03).
+`make dev` starts the local services and the Next.js dev server on port 3000.
+`make eval`, `make e2e`, `make openapi` and `make migrate` fail on purpose until the
+tasks that build them (T19, T09, T02, T03).
+
+## CI
+
+[.github/workflows/ci.yml](.github/workflows/ci.yml) runs on pull requests and pushes to
+`main`: Python checks and `pip-audit`, web checks and `npm audit`, `docker compose config`,
+and gitleaks secret scanning. It has read-only permissions and uses no secrets.
 
 ## Local services
 
