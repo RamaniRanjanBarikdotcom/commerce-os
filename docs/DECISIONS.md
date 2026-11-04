@@ -12,4 +12,7 @@ One line per decision or dependency, newest last. Format: date · area · decisi
 - 2026-11-04 · web · T01 web app is minimal Next.js + strict TypeScript + ESLint + Prettier + Vitest only; Tailwind, shadcn/ui, next-intl and TanStack are added in T09.
 - 2026-11-04 · ci · `import-linter` is added in T02, once modules exist to check.
 - 2026-11-04 · environment · Project lives on an exFAT drive; named volumes only; no symlinks; revisit if tooling problems appear.
+- 2026-11-04 · python · T01 uses one root uv project (`package = false`) with source roots `apps/api`, `apps/worker` and `packages` on the pytest and mypy paths; it is split into uv workspace members when T02 and T20 give the API and worker their own dependencies.
+- 2026-11-04 · dependency · Python dev tools, locked in `uv.lock`: ruff 0.17.3 (lint and format, spec section 3), mypy 2.4.1 (strict type checks, section 3), pytest 9.2.0 (tests, section 4), pip-audit 2.10.1 (dependency audit in CI, section 13). pytest-asyncio is added when the first async test arrives (T02).
+- 2026-11-04 · tooling · uv warns "Failed to hardlink files; falling back to full copy" because its cache is on C: and the project on exFAT D:. Installs still work; the warning is not suppressed.
 - 2026-11-04 · git · Git on this machine needs `-c safe.directory=...` per command because exFAT records no file ownership; no Git config file is changed for this.

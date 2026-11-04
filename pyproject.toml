@@ -1,0 +1,42 @@
+[project]
+name = "commerce-os"
+version = "0.0.0"
+description = "Multichannel seller platform (see docs/SPEC.md)"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv]
+# The root is not an installable package yet; T02 and T20 split apps/api and
+# apps/worker into workspace members when they get their own dependencies.
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "apps/api/tests"]
+pythonpath = ["apps/api", "apps/worker", "packages"]
+addopts = "-ra --strict-markers"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "S", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+"apps/*/tests/**" = ["S101"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = ["apps/api", "apps/worker", "packages"]
+explicit_package_bases = true
+files = ["apps/api/app", "apps/worker", "packages/connectors", "tests"]
+
+[dependency-groups]
+dev = [
+    "mypy>=2.4.1",
+    "pip-audit>=2.10.1",
+    "pytest>=9.2.0",
+    "ruff>=0.17.3",
+]
