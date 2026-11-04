@@ -1,6 +1,7 @@
 """Repository scaffold checks for T01 (spec sections 3 and 13)."""
 
 import importlib
+import json
 import os
 import re
 from pathlib import Path
@@ -131,6 +132,25 @@ def test_no_symlinks_in_repository() -> None:
             if path.is_symlink():
                 links.append(str(path.relative_to(ROOT)))
     assert links == []
+
+
+def test_makefile_web_commands_have_npm_scripts() -> None:
+    scripts = json.loads((ROOT / "apps/web/package.json").read_text())["scripts"]
+    used = {
+        match
+        for lines in make_recipes().values()
+        for line in lines
+        for match in re.findall(r"\$\(WEB\) run ([\w:]+)", line)
+    }
+    assert used, "expected web commands in the Makefile"
+    assert used | {"test"} <= set(scripts), f"missing npm scripts: {sorted(used - set(scripts))}"
+
+
+def test_node_22_pinned() -> None:
+    nvmrc = (ROOT / ".nvmrc").read_text().strip()
+    assert re.fullmatch(r"22\.\d+\.\d+", nvmrc), f".nvmrc must pin an exact Node 22: {nvmrc}"
+    engines = json.loads((ROOT / "apps/web/package.json").read_text())["engines"]["node"]
+    assert "<23" in engines
 
 
 def test_gitattributes_forces_lf_and_marks_binaries() -> None:
