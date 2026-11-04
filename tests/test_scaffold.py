@@ -153,6 +153,17 @@ def test_node_22_pinned() -> None:
     assert "<23" in engines
 
 
+def test_ci_workflow_is_locked_down() -> None:
+    text = (ROOT / ".github/workflows/ci.yml").read_text()
+    uses = re.findall(r"uses:\s*(\S+)", text)
+    assert uses, "expected actions in the CI workflow"
+    for action in uses:
+        assert re.fullmatch(r"[\w.-]+/[\w.-]+@[0-9a-f]{40}", action), f"not pinned by SHA: {action}"
+    assert re.search(r"^permissions:\n  contents: read\n\n", text, re.M)
+    assert "secrets." not in text
+    assert re.search(r"^on:\n  pull_request:\n  push:\n    branches: \[main\]\n", text, re.M)
+
+
 def test_gitattributes_forces_lf_and_marks_binaries() -> None:
     lines = (ROOT / ".gitattributes").read_text().splitlines()
     assert "* text=auto eol=lf" in lines
